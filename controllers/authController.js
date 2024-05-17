@@ -7,11 +7,10 @@ const {
   internalErrorResponse,
   notFoundResponse,
 } = require("../config/responseJson");
-const { users } = require("../models");
 
 async function register(req, res) {
   try {
-    const { username, email, password } = req.body;
+    const { name, email, password } = req.body;
     // Check if user already exists
     const existingEmail = await users.findOne({ where: { email } });
     if (existingEmail) {
@@ -23,14 +22,14 @@ async function register(req, res) {
 
     // Create new user
     const user = await users.create({
-      username,
+      name,
       email,
       password: hashedPassword,
     });
 
     const userResponse = {
       id: user.id,
-      username: user.username,
+      name: user.name,
       email: user.email,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -60,7 +59,7 @@ async function login(req, res) {
 
     const userResponse = {
       id: user.id,
-      username: user.username,
+      name: user.name,
       email: user.email,
     };
 
@@ -83,7 +82,7 @@ async function login(req, res) {
 async function me(req, res) {
   try {
     const user = await users.findByPk(req.user.id, {
-      attributes: ["id", "username", "email"],
+      attributes: ["id", "name", "email"],
     });
     if (!user) {
       errorResponse(res, "User not found", 404);
